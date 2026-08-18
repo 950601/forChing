@@ -6,6 +6,7 @@
     var TOGETHER = new Date(2015, 9, 9, 20, 20, 0);
 
     var wrap = document.getElementById("wrap");
+    var stageSizer = document.getElementById("stage-sizer");
     var canvas = document.getElementById("canvas");
     var textBox = document.getElementById("text");
     var codeEl = document.getElementById("code");
@@ -28,7 +29,7 @@
     }
 
     function isCompact() {
-        return window.innerWidth < 900 || window.innerHeight < 640;
+        return window.innerWidth < 768 || (window.innerWidth < 1100 && window.innerHeight < 560);
     }
 
     function fitStage() {
@@ -45,16 +46,16 @@
             wrap.appendChild(clockBox);
         }
 
-        var margin = compact ? 16 : 32;
-        var availW = window.innerWidth - margin * 2;
-        var availH = window.innerHeight - margin * 2;
+        var margin = compact ? 28 : 32;
+        var availW = Math.max(240, window.innerWidth - margin);
+        var availH = Math.max(220, window.innerHeight - (compact ? 120 : 32));
+        var scale = compact
+            ? availW / STAGE_W
+            : Math.min(availW / STAGE_W, availH / STAGE_H);
+        scale = Math.max(0.22, Math.min(scale, 1));
 
-        if (compact && document.body.classList.contains("story-on")) {
-            availH -= Math.min(dock.getBoundingClientRect().height + 20, window.innerHeight * 0.42);
-        }
-
-        var scale = Math.min(availW / STAGE_W, availH / STAGE_H);
-        scale = Math.max(0.2, scale);
+        stageSizer.style.width = Math.round(STAGE_W * scale) + "px";
+        stageSizer.style.height = Math.round(STAGE_H * scale) + "px";
         wrap.style.transform = "scale(" + scale + ")";
     }
 
@@ -97,10 +98,11 @@
         var minutes = Math.floor(seconds / 60);
         seconds %= 60;
         clockEl.innerHTML =
-            "第 <span class=\"digit\">" + days + "</span> 天 " +
+            "<div class=\"clock-days\">第 <span class=\"digit\">" + days + "</span> 天</div>" +
+            "<div class=\"clock-hms\">" +
             "<span class=\"digit\">" + pad(hours) + "</span> 小时 " +
             "<span class=\"digit\">" + pad(minutes) + "</span> 分钟 " +
-            "<span class=\"digit\">" + pad(seconds) + "</span> 秒";
+            "<span class=\"digit\">" + pad(seconds) + "</span> 秒</div>";
     }
 
     function updateMusicUi() {
@@ -165,7 +167,7 @@
             ctx.translate(p.x, p.y);
             ctx.rotate(p.rot);
             ctx.globalAlpha = p.a;
-            ctx.fillStyle = "#e85a71";
+            ctx.fillStyle = "rgba(196, 30, 58, 0.35)";
             ctx.beginPath();
             var scale = p.r / 18;
             for (var t = 0; t < Math.PI * 2; t += 0.18) {
@@ -197,7 +199,7 @@
                     drawHeart(p);
                 } else {
                     ctx.globalAlpha = p.a;
-                    ctx.fillStyle = "#f7e6c4";
+                    ctx.fillStyle = "rgba(196, 30, 58, 0.28)";
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, Math.max(0.8, p.r * 0.12), 0, Math.PI * 2);
                     ctx.fill();
