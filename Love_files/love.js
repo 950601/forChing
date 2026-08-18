@@ -27,25 +27,25 @@
             return new Point(this.x, this.y);
         },
         add: function(o) {
-            p = this.clone();
+            var p = this.clone();
             p.x += o.x;
             p.y += o.y;
             return p;
         },
         sub: function(o) {
-            p = this.clone();
+            var p = this.clone();
             p.x -= o.x;
             p.y -= o.y;
             return p;
         },
         div: function(n) {
-            p = this.clone();
+            var p = this.clone();
             p.x /= n;
             p.y /= n;
             return p;
         },
         mul: function(n) {
-            p = this.clone();
+            var p = this.clone();
             p.x *= n;
             p.y *= n;
             return p;
@@ -168,20 +168,26 @@
 
             ctx.moveTo(0, 0);
             ctx.scale(0.75, 0.75);
-            ctx.font = "12px 微软雅黑,Verdana"; // 字号肿么没有用? (ˉ(∞)ˉ)
-            ctx.fillText("click here", 23, 16);
+            ctx.font = "12px Noto Serif SC, 微软雅黑, Verdana";
+            ctx.fillText("点这里", 23, 16);
             ctx.restore();
         },
         clear: function() {
             var ctx = this.tree.ctx, cirle = this.cirle;
             var point = cirle.point, scale = cirle.scale, radius = 26;
-            var w = h = (radius * scale);
+            var w = radius * scale;
+            var h = w;
             ctx.clearRect(point.x - w, point.y - h, 4 * w, 4 * h);
         },
         hover: function(x, y) {
             var ctx = this.tree.ctx;
-            var pixel = ctx.getImageData(x, y, 1, 1);
-            return pixel.data[3] == 255
+            var ix = Math.floor(x);
+            var iy = Math.floor(y);
+            if (ix < 0 || iy < 0 || ix >= this.tree.width || iy >= this.tree.height) {
+                return false;
+            }
+            var pixel = ctx.getImageData(ix, iy, 1, 1);
+            return pixel.data[3] === 255;
         }
     }
 
@@ -219,7 +225,7 @@
 
     Tree = function(canvas, width, height, opt) {
         this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
+        this.ctx = canvas.getContext('2d', { willReadFrequently: true });
         this.width = width;
         this.height = height;
         this.opt = opt || {};
@@ -390,8 +396,8 @@
                 width = rec.width,
                 height = rec.height; 
 
-            i = point.x + speed < x ? point.x + speed : x;
-            j = point.y + speed < y ? point.y + speed : y; 
+            var i = point.x + speed < x ? point.x + speed : x;
+            var j = point.y + speed < y ? point.y + speed : y; 
 
             ctx.save();
             ctx.clearRect(point.x, point.y, width, height);
@@ -471,7 +477,7 @@
     Bloom = function(tree, point, figure, color, alpha, angle, scale, place, speed) {
         this.tree = tree;
         this.point = point;
-        this.color = color || 'rgb(255,' + random(0, 255) + ',' + random(0, 255) + ')';
+        this.color = color || 'rgb(' + (220 + random(0, 35)) + ',' + random(30, 120) + ',' + random(70, 140) + ')';
         this.alpha = alpha || random(0.3, 1);
         this.angle = angle || random(0, 360);
         this.scale = scale || 0.1;
