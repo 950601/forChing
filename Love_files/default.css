@@ -114,6 +114,8 @@ a:hover {
     width: var(--stage-w);
     height: var(--stage-h);
     background: var(--cream);
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #text {
@@ -152,7 +154,14 @@ a:hover {
 }
 
 .together {
-    margin: 0 0 8px;
+    margin: 0 0 4px;
+}
+
+.since {
+    margin: 0 0 10px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    opacity: 0.72;
 }
 
 #clock {

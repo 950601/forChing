@@ -181,8 +181,13 @@
         },
         hover: function(x, y) {
             var ctx = this.tree.ctx;
-            var pixel = ctx.getImageData(x, y, 1, 1);
-            return pixel.data[3] == 255
+            var ix = Math.floor(x);
+            var iy = Math.floor(y);
+            if (ix < 0 || iy < 0 || ix >= this.tree.width || iy >= this.tree.height) {
+                return false;
+            }
+            var pixel = ctx.getImageData(ix, iy, 1, 1);
+            return pixel.data[3] === 255;
         }
     }
 
@@ -220,7 +225,7 @@
 
     Tree = function(canvas, width, height, opt) {
         this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
+        this.ctx = canvas.getContext('2d', { willReadFrequently: true });
         this.width = width;
         this.height = height;
         this.opt = opt || {};
