@@ -71,21 +71,39 @@
         return new Promise(function (resolve) {
             var html = el.innerHTML;
             var progress = 0;
-            el.innerHTML = "";
             el.classList.add("is-on");
-            var timer = setInterval(function () {
-                if (html.charAt(progress) === "<") {
-                    progress = html.indexOf(">", progress) + 1;
-                } else {
-                    progress += 1;
+            el.style.visibility = "hidden";
+            el.innerHTML = html;
+
+            function lockHeightAndType() {
+                if (el.offsetHeight) {
+                    el.style.minHeight = el.offsetHeight + "px";
                 }
-                el.innerHTML = html.slice(0, progress) + (progress & 1 ? "_" : "");
-                if (progress >= html.length) {
-                    el.innerHTML = html;
-                    clearInterval(timer);
-                    resolve();
-                }
-            }, interval || 72);
+                el.innerHTML = '<span class="typed-caret" aria-hidden="true"></span>';
+                el.style.visibility = "";
+
+                var timer = setInterval(function () {
+                    if (html.charAt(progress) === "<") {
+                        progress = html.indexOf(">", progress) + 1;
+                    } else {
+                        progress += 1;
+                    }
+                    el.innerHTML = html.slice(0, progress) +
+                        '<span class="typed-caret" aria-hidden="true"></span>';
+                    if (progress >= html.length) {
+                        el.innerHTML = html;
+                        el.style.minHeight = "";
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, interval || 72);
+            }
+
+            if (el.offsetHeight) {
+                lockHeightAndType();
+            } else {
+                requestAnimationFrame(lockHeightAndType);
+            }
         });
     }
 
@@ -343,7 +361,7 @@
             document.body.classList.add("story-on");
             clockBox.classList.add("is-on");
             fitStage();
-            typewriter(codeEl).then(fitStage);
+            typewriter(codeEl);
             while (true) {
                 timeElapse(TOGETHER);
                 await sleep(1000);

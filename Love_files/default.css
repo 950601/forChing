@@ -144,6 +144,16 @@ a:hover {
     display: block;
 }
 
+.typed-caret {
+    display: inline-block;
+    width: 0;
+    height: 1em;
+    margin: 0;
+    border-right: 2px solid var(--rose);
+    vertical-align: -0.12em;
+    animation: caret-blink 1s step-end infinite;
+}
+
 #clock-box {
     position: absolute;
     left: 56px;
@@ -359,6 +369,12 @@ body.is-compact a {
     color: var(--rose);
 }
 
+@keyframes caret-blink {
+    50% {
+        border-color: transparent;
+    }
+}
+
 @keyframes pulse {
     0%,
     100% {
@@ -391,6 +407,10 @@ body.is-compact a {
 
 @media (prefers-reduced-motion: reduce) {
     .hint {
+        animation: none;
+    }
+
+    .typed-caret {
         animation: none;
     }
 }
