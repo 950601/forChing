@@ -1,0 +1,30 @@
+Love_files/default.css
+  ada4611e3ac7d398 2-3,23,63,71,79,103-104,115,120,122-128,131-134,137,139-142,148,205-207,225,227-228,258,260,262-265,280,301
+Love_files/love.js
+  ada4611e3ac7d398 183-186
+index.html
+  ada4611e3ac7d398 6,36-37
+Love_files/app.js
+  ada4611e3ac7d398 12,38,41,49-50,175,300-301,318
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.3",
+  "base_commit_sha": "02910760e34203ad94239592b6bad626eab8537d",
+  "prompts": {
+    "ada4611e3ac7d398": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "84870c0e-aede-4899-8ef9-1cec31c43340",
+        "model": "grok-4.6"
+      },
+      "human_author": "xuming17002 <xuming17002@cvte.com>",
+      "messages": [],
+      "total_additions": 267,
+      "total_deletions": 324,
+      "accepted_lines": 67,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/944e1ac9db6880fa60d3e990c55f4d4c11fa56c7cd2078caa9146af9c709eb76"
+    }
+  }
+}
