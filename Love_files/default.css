@@ -131,7 +131,8 @@ a:hover {
 .couple.is-on {
     opacity: 1;
     transform: none;
-    transition: opacity 1.4s ease, transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.55s ease;
+    will-change: opacity;
 }
 
 .couple-art {

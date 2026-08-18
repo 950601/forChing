@@ -16,6 +16,19 @@
     var bgm = document.getElementById("bgm");
     var errorEl = document.getElementById("error");
 
+    // Preload the couple silhouette so mobile/github.io network doesn't delay
+    // the overlay animation vs the canvas tree rendering.
+    var coupleReady = new Promise(function (resolve) {
+        var img = new Image();
+        img.onload = function () {
+            resolve(true);
+        };
+        img.onerror = function () {
+            resolve(false);
+        };
+        img.src = "Love_files/couple-back.png";
+    });
+
     function sleep(ms) {
         return new Promise(function (resolve) {
             setTimeout(resolve, ms);
@@ -315,6 +328,7 @@
         async function textAnimate() {
             document.body.classList.add("story-on");
             clockBox.classList.add("is-on");
+            await coupleReady;
             coupleEl.classList.add("is-on");
             fitStage();
             while (true) {
