@@ -6,6 +6,7 @@
     var TOGETHER = new Date(2015, 9, 9, 20, 20, 0);
 
     var wrap = document.getElementById("wrap");
+    var stageSizer = document.getElementById("stage-sizer");
     var canvas = document.getElementById("canvas");
     var textBox = document.getElementById("text");
     var codeEl = document.getElementById("code");
@@ -28,7 +29,7 @@
     }
 
     function isCompact() {
-        return window.innerWidth < 900 || window.innerHeight < 640;
+        return window.innerWidth < 768 || (window.innerWidth < 1100 && window.innerHeight < 560);
     }
 
     function fitStage() {
@@ -45,16 +46,16 @@
             wrap.appendChild(clockBox);
         }
 
-        var margin = compact ? 16 : 32;
-        var availW = window.innerWidth - margin * 2;
-        var availH = window.innerHeight - margin * 2;
+        var margin = compact ? 28 : 32;
+        var availW = Math.max(240, window.innerWidth - margin);
+        var availH = Math.max(220, window.innerHeight - (compact ? 120 : 32));
+        var scale = compact
+            ? availW / STAGE_W
+            : Math.min(availW / STAGE_W, availH / STAGE_H);
+        scale = Math.max(0.22, Math.min(scale, 1));
 
-        if (compact && document.body.classList.contains("story-on")) {
-            availH -= Math.min(dock.getBoundingClientRect().height + 20, window.innerHeight * 0.42);
-        }
-
-        var scale = Math.min(availW / STAGE_W, availH / STAGE_H);
-        scale = Math.max(0.2, scale);
+        stageSizer.style.width = Math.round(STAGE_W * scale) + "px";
+        stageSizer.style.height = Math.round(STAGE_H * scale) + "px";
         wrap.style.transform = "scale(" + scale + ")";
     }
 
@@ -69,20 +70,60 @@
     function typewriter(el, interval) {
         return new Promise(function (resolve) {
             var html = el.innerHTML;
-            var progress = 0;
-            el.innerHTML = "";
             el.classList.add("is-on");
-            var timer = setInterval(function () {
-                if (html.charAt(progress) === "<") {
-                    progress = html.indexOf(">", progress) + 1;
-                } else {
-                    progress += 1;
+            el.innerHTML =
+                '<div class="code-ghost" aria-hidden="true">' + html + "</div>" +
+                '<div class="code-live"></div>';
+
+            var live = el.querySelector(".code-live");
+            var sourceLines = el.querySelectorAll(".code-ghost .say");
+            var lines = [];
+            var i;
+            for (i = 0; i < sourceLines.length; i += 1) {
+                var line = document.createElement("span");
+                line.className = sourceLines[i].className;
+                live.appendChild(line);
+                lines.push({
+                    el: line,
+                    text: sourceLines[i].textContent || ""
+                });
+            }
+
+            var lineIndex = 0;
+            var charIndex = 0;
+            var caret = document.createElement("span");
+            caret.className = "typed-caret";
+            caret.setAttribute("aria-hidden", "true");
+
+            function placeCaret(target) {
+                if (caret.parentNode) {
+                    caret.parentNode.removeChild(caret);
                 }
-                el.innerHTML = html.slice(0, progress) + (progress & 1 ? "_" : "");
-                if (progress >= html.length) {
-                    el.innerHTML = html;
+                target.appendChild(caret);
+            }
+
+            if (lines[0]) {
+                placeCaret(lines[0].el);
+            }
+
+            var timer = setInterval(function () {
+                if (lineIndex >= lines.length) {
                     clearInterval(timer);
+                    if (caret.parentNode) {
+                        caret.parentNode.removeChild(caret);
+                    }
                     resolve();
+                    return;
+                }
+
+                var current = lines[lineIndex];
+                charIndex += 1;
+                current.el.textContent = current.text.slice(0, charIndex);
+                placeCaret(current.el);
+
+                if (charIndex >= current.text.length) {
+                    lineIndex += 1;
+                    charIndex = 0;
                 }
             }, interval || 72);
         });
@@ -97,10 +138,11 @@
         var minutes = Math.floor(seconds / 60);
         seconds %= 60;
         clockEl.innerHTML =
-            "第 <span class=\"digit\">" + days + "</span> 天 " +
+            "<div class=\"clock-days\">第 <span class=\"digit\">" + days + "</span> 天</div>" +
+            "<div class=\"clock-hms\">" +
             "<span class=\"digit\">" + pad(hours) + "</span> 小时 " +
             "<span class=\"digit\">" + pad(minutes) + "</span> 分钟 " +
-            "<span class=\"digit\">" + pad(seconds) + "</span> 秒";
+            "<span class=\"digit\">" + pad(seconds) + "</span> 秒</div>";
     }
 
     function updateMusicUi() {
@@ -165,7 +207,7 @@
             ctx.translate(p.x, p.y);
             ctx.rotate(p.rot);
             ctx.globalAlpha = p.a;
-            ctx.fillStyle = "#e85a71";
+            ctx.fillStyle = "rgba(232, 120, 140, 0.28)";
             ctx.beginPath();
             var scale = p.r / 18;
             for (var t = 0; t < Math.PI * 2; t += 0.18) {
@@ -197,7 +239,7 @@
                     drawHeart(p);
                 } else {
                     ctx.globalAlpha = p.a;
-                    ctx.fillStyle = "#f7e6c4";
+                    ctx.fillStyle = "rgba(232, 160, 170, 0.35)";
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, Math.max(0.8, p.r * 0.12), 0, Math.PI * 2);
                     ctx.fill();
@@ -323,7 +365,7 @@
             foot.draw();
             tree.snapshot("p2", 500, 0, 610, 680);
             wrap.style.background = "url(" + tree.toDataURL("image/png") + ")";
-            canvas.style.background = "#fff6ea";
+            canvas.style.background = "#ffffee";
             await sleep(300);
             canvas.style.background = "none";
         }
@@ -340,8 +382,9 @@
         async function textAnimate() {
             document.body.classList.add("story-on");
             clockBox.classList.add("is-on");
+            timeElapse(TOGETHER);
             fitStage();
-            typewriter(codeEl).then(fitStage);
+            typewriter(codeEl);
             while (true) {
                 timeElapse(TOGETHER);
                 await sleep(1000);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#14080c">
+    <meta name="theme-color" content="#ffffff">
     <meta name="description" content="徐明 与 楚滢 的秘密花园">
     <title>Secret Place</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23c41e3a' d='M50 88 C20 62 4 44 4 26 C4 12 16 4 28 4 C38 4 46 10 50 18 C54 10 62 4 72 4 C84 4 96 12 96 26 C96 44 80 62 50 88Z'/%3E%3C/svg%3E">
@@ -14,9 +14,6 @@
 </head>
 <body>
     <canvas id="sky" aria-hidden="true"></canvas>
-    <div class="orb orb-a" aria-hidden="true"></div>
-    <div class="orb orb-b" aria-hidden="true"></div>
-    <div class="vignette" aria-hidden="true"></div>
 
     <button type="button" id="music-btn" class="icon-btn" aria-pressed="false" aria-label="播放音乐" title="音乐">
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -26,10 +23,9 @@
         </svg>
     </button>
 
-    <p id="hint" class="hint">点击红心，让树长出来</p>
-
     <main class="app">
         <div class="stage-frame">
+            <div id="stage-sizer" class="stage-sizer">
             <div id="wrap">
                 <div id="error">当前浏览器无法绘制画布，请换用最新版 Chrome、Safari 或 Firefox 打开。</div>
                 <canvas id="canvas" width="1100" height="680">你的浏览器不支持 canvas。</canvas>
@@ -39,7 +35,7 @@
                         <span class="say">往事，从远方款款而来。曾经哭过的，笑过的，都成了昨日落花的温柔。</span>
                         <span class="say">爱，像一池温柔的秋水。平静的水面上泛着爱的涟漪，水底澎湃着海浪的气息。</span>
                         <span class="say">它让人痴，让人狂，让人醉，让人倾其所有，又无怨无悔。</span>
-                        <span class="say signature"><span class="space"></span>—— 短文摘抄</span>
+                        <span class="say signature">—— 短文摘抄</span>
                     </div>
                 </div>
                 <div id="clock-box">
@@ -53,7 +49,9 @@
                     <div id="clock"></div>
                 </div>
             </div>
+            </div>
         </div>
+        <p id="hint" class="hint">点击红心，让树长出来</p>
         <aside id="dock" class="dock" aria-live="polite"></aside>
     </main>
 
