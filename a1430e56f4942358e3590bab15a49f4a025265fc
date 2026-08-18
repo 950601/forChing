@@ -1,0 +1,28 @@
+Love_files/app.js
+  ada4611e3ac7d398 19-31,331
+index.html
+  ada4611e3ac7d398 37-46
+Love_files/default.css
+  ada4611e3ac7d398 134-135
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.3",
+  "base_commit_sha": "a1430e56f4942358e3590bab15a49f4a025265fc",
+  "prompts": {
+    "ada4611e3ac7d398": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "84870c0e-aede-4899-8ef9-1cec31c43340",
+        "model": "default"
+      },
+      "human_author": "xuming17002 <xuming17002@cvte.com>",
+      "messages": [],
+      "total_additions": 26,
+      "total_deletions": 2,
+      "accepted_lines": 26,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/ba6ab82d286df934b2164ea16d399e8308e6cc8e75c5ecd2055369c694772338"
+    }
+  }
+}
