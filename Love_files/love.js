@@ -180,14 +180,10 @@
             ctx.clearRect(point.x - w, point.y - h, 4 * w, 4 * h);
         },
         hover: function(x, y) {
-            var ctx = this.tree.ctx;
-            var ix = Math.floor(x);
-            var iy = Math.floor(y);
-            if (ix < 0 || iy < 0 || ix >= this.tree.width || iy >= this.tree.height) {
-                return false;
-            }
-            var pixel = ctx.getImageData(ix, iy, 1, 1);
-            return pixel.data[3] === 255;
+            var p = this.heart.point;
+            var s = this.heart.scale * 2;
+            return x >= p.x - 16 * s && x <= p.x + 60 * s &&
+                y >= p.y - 17 * s && y <= p.y + 20 * s;
         }
     }
 

@@ -7,10 +7,9 @@
 
     var wrap = document.getElementById("wrap");
     var canvas = document.getElementById("canvas");
-    var textBox = document.getElementById("text");
-    var codeEl = document.getElementById("code");
     var clockBox = document.getElementById("clock-box");
     var clockEl = document.getElementById("clock");
+    var coupleEl = document.getElementById("couple");
     var dock = document.getElementById("dock");
     var hint = document.getElementById("hint");
     var musicBtn = document.getElementById("music-btn");
@@ -36,12 +35,10 @@
         document.body.classList.toggle("is-compact", compact);
 
         if (compact) {
-            if (textBox.parentElement !== dock) {
-                dock.appendChild(textBox);
+            if (clockBox.parentElement !== dock) {
                 dock.appendChild(clockBox);
             }
-        } else if (textBox.parentElement !== wrap) {
-            wrap.appendChild(textBox);
+        } else if (clockBox.parentElement !== wrap) {
             wrap.appendChild(clockBox);
         }
 
@@ -49,8 +46,8 @@
         var availW = window.innerWidth - margin * 2;
         var availH = window.innerHeight - margin * 2;
 
-        if (compact && document.body.classList.contains("story-on")) {
-            availH -= Math.min(dock.getBoundingClientRect().height + 20, window.innerHeight * 0.42);
+        if (compact) {
+            availH -= Math.min(window.innerHeight * 0.22, 140);
         }
 
         var scale = Math.min(availW / STAGE_W, availH / STAGE_H);
@@ -64,28 +61,6 @@
             x: (event.clientX - rect.left) * (canvas.width / rect.width),
             y: (event.clientY - rect.top) * (canvas.height / rect.height)
         };
-    }
-
-    function typewriter(el, interval) {
-        return new Promise(function (resolve) {
-            var html = el.innerHTML;
-            var progress = 0;
-            el.innerHTML = "";
-            el.classList.add("is-on");
-            var timer = setInterval(function () {
-                if (html.charAt(progress) === "<") {
-                    progress = html.indexOf(">", progress) + 1;
-                } else {
-                    progress += 1;
-                }
-                el.innerHTML = html.slice(0, progress) + (progress & 1 ? "_" : "");
-                if (progress >= html.length) {
-                    el.innerHTML = html;
-                    clearInterval(timer);
-                    resolve();
-                }
-            }, interval || 72);
-        });
     }
 
     function timeElapse(date) {
@@ -197,7 +172,7 @@
                     drawHeart(p);
                 } else {
                     ctx.globalAlpha = p.a;
-                    ctx.fillStyle = "#f7e6c4";
+                    ctx.fillStyle = "#e8c48a";
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, Math.max(0.8, p.r * 0.12), 0, Math.PI * 2);
                     ctx.fill();
@@ -322,8 +297,8 @@
             }
             foot.draw();
             tree.snapshot("p2", 500, 0, 610, 680);
-            wrap.style.background = "url(" + tree.toDataURL("image/png") + ")";
-            canvas.style.background = "#fff6ea";
+            wrap.style.background = "#ffffff url(" + tree.toDataURL("image/png") + ")";
+            canvas.style.background = "#ffffff";
             await sleep(300);
             canvas.style.background = "none";
         }
@@ -340,8 +315,8 @@
         async function textAnimate() {
             document.body.classList.add("story-on");
             clockBox.classList.add("is-on");
+            coupleEl.classList.add("is-on");
             fitStage();
-            typewriter(codeEl).then(fitStage);
             while (true) {
                 timeElapse(TOGETHER);
                 await sleep(1000);
