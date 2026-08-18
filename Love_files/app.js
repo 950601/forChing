@@ -70,40 +70,62 @@
     function typewriter(el, interval) {
         return new Promise(function (resolve) {
             var html = el.innerHTML;
-            var progress = 0;
             el.classList.add("is-on");
-            el.style.visibility = "hidden";
-            el.innerHTML = html;
+            el.innerHTML =
+                '<div class="code-ghost" aria-hidden="true">' + html + "</div>" +
+                '<div class="code-live"></div>';
 
-            function lockHeightAndType() {
-                if (el.offsetHeight) {
-                    el.style.minHeight = el.offsetHeight + "px";
+            var live = el.querySelector(".code-live");
+            var sourceLines = el.querySelectorAll(".code-ghost .say");
+            var lines = [];
+            var i;
+            for (i = 0; i < sourceLines.length; i += 1) {
+                var line = document.createElement("span");
+                line.className = sourceLines[i].className;
+                live.appendChild(line);
+                lines.push({
+                    el: line,
+                    text: sourceLines[i].textContent || ""
+                });
+            }
+
+            var lineIndex = 0;
+            var charIndex = 0;
+            var caret = document.createElement("span");
+            caret.className = "typed-caret";
+            caret.setAttribute("aria-hidden", "true");
+
+            function placeCaret(target) {
+                if (caret.parentNode) {
+                    caret.parentNode.removeChild(caret);
                 }
-                el.innerHTML = '<span class="typed-caret" aria-hidden="true"></span>';
-                el.style.visibility = "";
-
-                var timer = setInterval(function () {
-                    if (html.charAt(progress) === "<") {
-                        progress = html.indexOf(">", progress) + 1;
-                    } else {
-                        progress += 1;
-                    }
-                    el.innerHTML = html.slice(0, progress) +
-                        '<span class="typed-caret" aria-hidden="true"></span>';
-                    if (progress >= html.length) {
-                        el.innerHTML = html;
-                        el.style.minHeight = "";
-                        clearInterval(timer);
-                        resolve();
-                    }
-                }, interval || 72);
+                target.appendChild(caret);
             }
 
-            if (el.offsetHeight) {
-                lockHeightAndType();
-            } else {
-                requestAnimationFrame(lockHeightAndType);
+            if (lines[0]) {
+                placeCaret(lines[0].el);
             }
+
+            var timer = setInterval(function () {
+                if (lineIndex >= lines.length) {
+                    clearInterval(timer);
+                    if (caret.parentNode) {
+                        caret.parentNode.removeChild(caret);
+                    }
+                    resolve();
+                    return;
+                }
+
+                var current = lines[lineIndex];
+                charIndex += 1;
+                current.el.textContent = current.text.slice(0, charIndex);
+                placeCaret(current.el);
+
+                if (charIndex >= current.text.length) {
+                    lineIndex += 1;
+                    charIndex = 0;
+                }
+            }, interval || 72);
         });
     }
 
@@ -185,7 +207,7 @@
             ctx.translate(p.x, p.y);
             ctx.rotate(p.rot);
             ctx.globalAlpha = p.a;
-            ctx.fillStyle = "rgba(196, 30, 58, 0.35)";
+            ctx.fillStyle = "rgba(232, 120, 140, 0.28)";
             ctx.beginPath();
             var scale = p.r / 18;
             for (var t = 0; t < Math.PI * 2; t += 0.18) {
@@ -217,7 +239,7 @@
                     drawHeart(p);
                 } else {
                     ctx.globalAlpha = p.a;
-                    ctx.fillStyle = "rgba(196, 30, 58, 0.28)";
+                    ctx.fillStyle = "rgba(232, 160, 170, 0.35)";
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, Math.max(0.8, p.r * 0.12), 0, Math.PI * 2);
                     ctx.fill();
@@ -343,7 +365,7 @@
             foot.draw();
             tree.snapshot("p2", 500, 0, 610, 680);
             wrap.style.background = "url(" + tree.toDataURL("image/png") + ")";
-            canvas.style.background = "#fff6ea";
+            canvas.style.background = "#ffffee";
             await sleep(300);
             canvas.style.background = "none";
         }
@@ -360,6 +382,7 @@
         async function textAnimate() {
             document.body.classList.add("story-on");
             clockBox.classList.add("is-on");
+            timeElapse(TOGETHER);
             fitStage();
             typewriter(codeEl);
             while (true) {
